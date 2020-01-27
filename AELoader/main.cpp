@@ -2,13 +2,15 @@
 #include <wchar.h>
 
 #include "declarations.hpp"
+#include "utility.hpp"
 
 namespace jbhack {
 
 struct event_log_reporter final
 {
-    explicit event_log_reporter(bool const enable) noexcept :
-        handle_(enable ? RegisterEventSourceW(nullptr, app_name) : nullptr)
+    event_log_reporter() noexcept :
+        has_handle_(false),
+        handle_(nullptr)
     {
     }
 
@@ -18,14 +20,16 @@ struct event_log_reporter final
             DeregisterEventSource(handle_);
     }
 
-    void report(WORD const type, DWORD const eventId) const noexcept
+    void report(WORD const type, DWORD const eventId) noexcept
     {
+        ensure_handle();
         if (handle_)
             ReportEventW(handle_, type, 0, eventId, nullptr, 0, 0, nullptr, nullptr);
     }
 
-    void report(WORD const type, DWORD const eventId, WCHAR const * const text) const noexcept
+    void report(WORD const type, DWORD const eventId, WCHAR const * const text) noexcept
     {
+        ensure_handle();
         if (handle_)
         {
             LPCWSTR strings[] = {text};
@@ -34,19 +38,31 @@ struct event_log_reporter final
     }
 
 private:
-    HANDLE const handle_;
-};
+    bool has_handle_;
+    HANDLE handle_;
 
-template<typename Type, DWORD size>
-constexpr DWORD elements_of(Type (&)[size]) noexcept { return size; }
+    void ensure_handle() noexcept
+    {
+        if (has_handle_)
+            return;
+        handle_ = RegisterEventSourceW(nullptr, app_name);
+        has_handle_ = true;
+    }
+};
 
 bool do_hack() noexcept
 {
-    WCHAR ini_file[1024];
-    if (!ExpandEnvironmentStringsW(ini_file_pattern, ini_file, elements_of(ini_file)))
-        return false;
+    event_log_reporter reporter;
 
-    event_log_reporter const reporter(GetPrivateProfileIntW(app_name, key_enable_event_logs, 0, ini_file) != 0);
+    WCHAR ini_file[1024];
+    if (!get_ini_file(ini_file))
+    {
+        reporter.report(EVENTLOG_ERROR_TYPE, 301);
+        return false;
+    }
+    auto && on_exit = make_on_exit_scope([ini_file] { DeleteFileW(ini_file); });
+
+    bool const full_reporting = GetPrivateProfileIntW(app_name, key_enable_event_logs, 0, ini_file) != 0;
 
     {
         WCHAR executable[1024];
@@ -58,10 +74,12 @@ bool do_hack() noexcept
         LPCWSTR ptr = wcsrchr(executable, L'\\');
         if (!ptr || _wcsicmp(++ptr, L"recdisc.exe"))
         {
-            reporter.report(EVENTLOG_ERROR_TYPE, 102, executable);
+            if (full_reporting)
+                reporter.report(EVENTLOG_ERROR_TYPE, 102, executable);
             return false;
         }
-        reporter.report(EVENTLOG_INFORMATION_TYPE, 100, executable);
+        if (full_reporting)
+            reporter.report(EVENTLOG_INFORMATION_TYPE, 100, executable);
     }
 
     {
@@ -81,7 +99,8 @@ bool do_hack() noexcept
         }
         CloseHandle(pi.hThread);
         CloseHandle(pi.hProcess);
-        reporter.report(EVENTLOG_INFORMATION_TYPE, 200, command_line);
+        if (full_reporting)
+            reporter.report(EVENTLOG_INFORMATION_TYPE, 200, command_line);
     }
 
     return true;

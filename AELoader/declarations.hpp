@@ -1,8 +1,10 @@
 ﻿#pragma once
 
+#include <windows.h>
+
 namespace jbhack {
 
-constexpr WCHAR ini_file_pattern[] = L"%ProgramData%\\AELoader.ini";
+constexpr WCHAR format_ini_file[] = L"\\AELoader.%u.ini";
 
 constexpr WCHAR app_name[] = L"AELoader";
 constexpr WCHAR dll_name[] = L"AELoader.dll";
