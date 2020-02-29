@@ -5,3 +5,4 @@ _ReSharper.Caches/
 obj/
 bin/
 *.user
+*.snk

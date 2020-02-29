@@ -1,0 +1,15 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)/key.snk</AssemblyOriginatorKeyFile>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/ww898/ae_loader</RepositoryUrl>
+    <Authors>Mikhail Pilin</Authors>
+    <Copyright>Copyright © 2020 Mikhail Pilin</Copyright>
+    <Description>Auto elevation executor</Description>
+    <Version>1.0.2</Version>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(OS)' == 'Windows_NT' AND ('$(TargetFramework)' == 'net20' or '$(TargetFramework)' == 'net30' or '$(TargetFramework)' == 'net35')">
+    <FrameworkPathOverride>$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\Framework\.NETFramework\v3.5\Profile\Client</FrameworkPathOverride>
+  </PropertyGroup>
+</Project>

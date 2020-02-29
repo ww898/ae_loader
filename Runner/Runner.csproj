@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../Common.targets" />
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFrameworks>netcoreapp2.0;net20;net40</TargetFrameworks>
+        <RootNamespace>ww898.Runner</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\AELauncher\AELauncher.csproj" />
+    </ItemGroup>
+</Project>
