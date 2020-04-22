@@ -13,12 +13,10 @@ namespace ww898.AELauncher
   public static class AEProcess
   {
     private const string Sys32Dir = @"%SystemRoot%\System32";
-    private const string Wow64Dir = @"%SystemRoot%\SysWOW64";
 
     private const string AeLoaderDll = "AELoader.dll";
 
     private const string Sys32AeLoaderDll = Sys32Dir + @"\" + AeLoaderDll;
-    private const string Wow64AeLoaderDll = Wow64Dir + @"\" + AeLoaderDll;
 
     private const string DonorExe = Sys32Dir + @"\recdisc.exe";
 
@@ -52,10 +50,6 @@ namespace ww898.AELauncher
 
       if (!File.Exists(Environment.ExpandEnvironmentVariables(Sys32AeLoaderDll)))
         throw new FileNotFoundException(Sys32AeLoaderDll + " wasn't found");
-
-      if (Directory.Exists(Environment.ExpandEnvironmentVariables(Wow64Dir)))
-        if (!File.Exists(Environment.ExpandEnvironmentVariables(Wow64AeLoaderDll)))
-          throw new FileNotFoundException(Wow64AeLoaderDll + " wasn't found");
 
       if (!ElevationUtil.IsUacEnabled())
         throw new Exception("UAC is disabled");

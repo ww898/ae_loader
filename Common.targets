@@ -7,9 +7,13 @@
     <Authors>Mikhail Pilin</Authors>
     <Copyright>Copyright © 2020 Mikhail Pilin</Copyright>
     <Description>Auto elevation executor</Description>
-    <Version>1.0.2</Version>
+    <PackageReleaseNotes>Remove unnecessary WOW64 checking</PackageReleaseNotes>
+    <Version>1.0.3</Version>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(OS)' == 'Windows_NT' AND ('$(TargetFramework)' == 'net20' or '$(TargetFramework)' == 'net30' or '$(TargetFramework)' == 'net35')">
-    <FrameworkPathOverride>$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\Framework\.NETFramework\v3.5\Profile\Client</FrameworkPathOverride>
+  <PropertyGroup>
+    <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net20'">$(NuGetPackageRoot)microsoft.netframework.referenceassemblies.net20/1.0.0/build/.NETFramework/v2.0/</FrameworkPathOverride>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Condition="'$(TargetFramework)' == 'net20'" Include="Microsoft.NETFramework.ReferenceAssemblies.net20" Version="1.0.0" ExcludeAssets="All" PrivateAssets="All" />
+  </ItemGroup>
 </Project>

@@ -8,7 +8,7 @@ set _root_dir=%~dp0..
 set _ae_dir=%_root_dir%\ae
 set _install_dir=%_ae_dir%\install
 set _run_dir=%_ae_dir%\run
-set _zip_file=%_root_dir%\ae.zip
+set _zip_file=%_root_dir%\AELoader.zip
 
 del /q "%_zip_file%"
 rmdir /q /s "%_ae_dir%"
